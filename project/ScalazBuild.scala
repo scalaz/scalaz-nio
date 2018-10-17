@@ -5,7 +5,7 @@ object Scalaz {
   lazy val scalazVersion = "7.2.20"
 
   val testDeps        = Seq("org.scalacheck"  %% "scalacheck"   % "1.14.0" % "test")
-  val compileOnlyDeps = Seq("com.github.ghik" %% "silencer-lib" % "1.0"    % "provided")
+  val compileOnlyDeps = Seq("com.github.ghik" %% "silencer-lib" % "1.2.1"    % "provided")
 
   val compileAndTest = Seq(
     "org.scalaz" %% "scalaz-core" % scalazVersion % "compile, test",
@@ -64,7 +64,7 @@ object Scalaz {
     libraryDependencies ++= compileOnlyDeps ++ testDeps ++ compileAndTest ++ Seq(
       compilerPlugin("org.spire-math"         %% "kind-projector"  % "0.9.7"),
       compilerPlugin("com.github.tomasmikula" %% "pascal"          % "0.2.1"),
-      compilerPlugin("com.github.ghik"        %% "silencer-plugin" % "1.0")
+      compilerPlugin("com.github.ghik"        %% "silencer-plugin" % "1.2.1")
     ),
     incOptions ~= (_.withLogRecompileOnMacro(false))
   )
