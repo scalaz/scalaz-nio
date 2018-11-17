@@ -3,7 +3,7 @@ package scalaz.nio
 import scalaz.zio.IO
 //import scalaz.Scalaz._
 
-import java.nio.{ Buffer => JBuffer, ByteBuffer => JByteBuffer }
+import java.nio.{ Buffer => JBuffer, ByteBuffer => JByteBuffer, IntBuffer => JIntBuffer }
 
 import scala.reflect.ClassTag
 //import scala.{Array => SArray}
@@ -54,7 +54,11 @@ abstract class Buffer[A: ClassTag, B <: JBuffer] private[nio] (private[nio] val 
 
 class ByteBuffer private (val byteBuffer: JByteBuffer)
     extends Buffer[Byte, JByteBuffer](byteBuffer) {
+
   def array: IO[Exception, Array[Byte]] = IO.syncException(byteBuffer.array())
+
+  def asIntBuffer: IO[Exception, IntBuffer] =
+    IO.syncException(byteBuffer.asIntBuffer()).map(new IntBuffer(_))
 }
 
 object ByteBuffer {
@@ -81,4 +85,74 @@ object Buffer {
       new CharBuffer(JByteBuffer.allocate(capacity))
   }
 
+}
+
+class IntBuffer private[nio] (private val intBuffer: JIntBuffer)
+    extends Buffer[Int, JIntBuffer](intBuffer) {
+
+  val array: IO[Exception, Array[Int]] = IO.syncException(intBuffer.array())
+
+  val get: IO[Exception, Int] = IO.syncException(intBuffer.get())
+  def get(index: Int): IO[Exception, Int] = IO.syncException(intBuffer.get(index))
+
+  val bulkGet: IO[Exception, Array[Int]] =
+    IO.syncException {
+      val array = new Array[Int](intBuffer.limit())
+      intBuffer.get(array)
+      array
+    }
+
+  def bulkGet(offset: Int, length: Int): IO[Exception, Array[Int]] =
+    IO.syncException {
+      val array = new Array[Int](offset + length)
+      intBuffer.get(array, offset, length)
+      array
+    }
+
+  def put(i: Int): IO[Exception, IntBuffer] =
+    IO.syncException {
+      intBuffer.put(i)
+      this
+    }
+
+  def put(index: Int, i: Int): IO[Exception, IntBuffer] =
+    IO.syncException {
+      intBuffer.put(index, i)
+      this
+    }
+
+  def put(src: IntBuffer): IO[Exception, IntBuffer] =
+    IO.syncException {
+      intBuffer.put(src.intBuffer)
+      this
+    }
+
+  def put(src: Array[Int], offset: Int, length: Int): IO[Exception, IntBuffer] =
+    IO.syncException {
+      intBuffer.put(src, offset, length)
+      this
+    }
+
+  def put(src: Array[Int]): IO[Exception, IntBuffer] =
+    IO.syncException {
+      intBuffer.put(src)
+      this
+    }
+
+  val slice: IO[Nothing, IntBuffer] = IO.sync(intBuffer.slice()).map(new IntBuffer(_))
+  val duplicate: IO[Nothing, IntBuffer] = IO.sync(intBuffer.duplicate()).map(new IntBuffer(_))
+  val asReadOnlyBuffer: IO[Nothing, IntBuffer] = IO.sync(intBuffer.asReadOnlyBuffer()).map(new IntBuffer(_))
+
+}
+
+object IntBuffer {
+
+  def apply(capacity: Int): IO[Exception, IntBuffer] =
+    IO.syncException(JIntBuffer.allocate(capacity)).map(new IntBuffer(_))
+
+  def wrap(array: Array[Int], offset: Int, length: Int): IO[Exception, IntBuffer] =
+    IO.syncException(JIntBuffer.wrap(array, offset, length)).map(new IntBuffer(_))
+
+  def wrap(array: Array[Int]): IO[Exception, IntBuffer] =
+    IO.syncException(JIntBuffer.wrap(array)).map(new IntBuffer(_))
 }

@@ -20,6 +20,8 @@ object Main {
     def unitTests =
       TestOutput.combineAll1(
         BufferSuite.tests(pureHarness)((), List("Buffer tests")),
+        IntBufferSuite.tests(pureHarness)((), List("IntBuffer tests")),
+        ByteBufferSuite.tests(pureHarness)((), List("ByteBuffer tests")),
         ChannelSuite.tests(pureHarness)((), List("Channel tests"))
       )
 
