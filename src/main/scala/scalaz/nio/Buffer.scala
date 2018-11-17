@@ -92,7 +92,7 @@ class IntBuffer private[nio] (private val intBuffer: JIntBuffer)
 
   val array: IO[Exception, Array[Int]] = IO.syncException(intBuffer.array())
 
-  val get: IO[Exception, Int] = IO.syncException(intBuffer.get())
+  val get: IO[Exception, Int]             = IO.syncException(intBuffer.get())
   def get(index: Int): IO[Exception, Int] = IO.syncException(intBuffer.get(index))
 
   val bulkGet: IO[Exception, Array[Int]] =
@@ -139,9 +139,11 @@ class IntBuffer private[nio] (private val intBuffer: JIntBuffer)
       this
     }
 
-  val slice: IO[Nothing, IntBuffer] = IO.sync(intBuffer.slice()).map(new IntBuffer(_))
+  val slice: IO[Nothing, IntBuffer]     = IO.sync(intBuffer.slice()).map(new IntBuffer(_))
   val duplicate: IO[Nothing, IntBuffer] = IO.sync(intBuffer.duplicate()).map(new IntBuffer(_))
-  val asReadOnlyBuffer: IO[Nothing, IntBuffer] = IO.sync(intBuffer.asReadOnlyBuffer()).map(new IntBuffer(_))
+
+  val asReadOnlyBuffer: IO[Nothing, IntBuffer] =
+    IO.sync(intBuffer.asReadOnlyBuffer()).map(new IntBuffer(_))
 
 }
 

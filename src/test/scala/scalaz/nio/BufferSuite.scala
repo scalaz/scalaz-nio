@@ -147,6 +147,7 @@ object BufferSuite extends RTS {
 }
 
 object ByteBufferSuite extends RTS {
+
   def tests[T](harness: Harness[T]): T = {
     import harness._
 
@@ -161,6 +162,7 @@ object ByteBufferSuite extends RTS {
 }
 
 object IntBufferSuite extends RTS {
+
   def tests[T](harness: Harness[T]): T = {
     import harness._
 
@@ -170,25 +172,24 @@ object IntBufferSuite extends RTS {
       test("apply") { () =>
         val apply = IntBuffer(3).flatMap(_.array)
 
-        assert(unsafeRun(apply) sameElements Array(0, 0, 0))
+        assert(unsafeRun(apply).sameElements(Array(0, 0, 0)))
       },
       namedSection("wrap")(
         test("backed by an array") { () =>
-
           val wrap =
             for {
               intBuffer <- IntBuffer.wrap(initialValues)
               array     <- intBuffer.array
             } yield array
 
-          assert(unsafeRun(wrap) sameElements initialValues)
+          assert(unsafeRun(wrap).sameElements(initialValues))
         }, {
 
           val wrap = IntBuffer.wrap(initialValues, 1, 2)
 
           namedSection("backed by array with offset and length")(
             test("array") { () =>
-              assert(unsafeRun(wrap.flatMap(_.array)) sameElements initialValues)
+              assert(unsafeRun(wrap.flatMap(_.array)).sameElements(initialValues))
             },
             test("position") { () =>
               assert(unsafeRun(wrap.flatMap(_.position)) == 1)
@@ -199,22 +200,18 @@ object IntBufferSuite extends RTS {
           )
         }
       ),
-
       namedSection("get")(
         test("at current position") { () =>
-
           val get = IntBuffer.wrap(initialValues, 1, 2).flatMap(_.get)
 
           assert(unsafeRun(get) == 2)
         },
         test("at index") { () =>
-
           val get = IntBuffer.wrap(initialValues).flatMap(_.get(1))
 
           assert(unsafeRun(get) == 2)
         },
         test("should update position") { () =>
-
           val position =
             for {
               buffer <- IntBuffer.wrap(initialValues)
@@ -225,45 +222,38 @@ object IntBufferSuite extends RTS {
           assert(unsafeRun(position) == 1)
         }
       ),
-
       namedSection("bulkGet")(
         test("entire buffer") { () =>
-
           val bulkGet = IntBuffer.wrap(initialValues).flatMap(_.bulkGet)
 
-          assert(unsafeRun(bulkGet) sameElements initialValues)
+          assert(unsafeRun(bulkGet).sameElements(initialValues))
         },
         test("offset of buffer") { () =>
-
           val bulkGet = IntBuffer.wrap(initialValues).flatMap(_.bulkGet(3, 2))
 
-          assert(unsafeRun(bulkGet) sameElements Array(0, 0, 0, 1, 2))
+          assert(unsafeRun(bulkGet).sameElements(Array(0, 0, 0, 1, 2)))
         }
       ),
-
       namedSection("put")(
         test("at current position") { () =>
-
           val put = for {
             buffer <- IntBuffer.wrap(initialValues)
             _      <- buffer.put(0)
             array  <- buffer.array
           } yield array
 
-          assert(unsafeRun(put) sameElements Array(0, 2, 3))
+          assert(unsafeRun(put).sameElements(Array(0, 2, 3)))
         },
         test("at index") { () =>
-
           val put = for {
             buffer <- IntBuffer.wrap(initialValues)
             _      <- buffer.put(1, 0)
             array  <- buffer.array
           } yield array
 
-          assert(unsafeRun(put) sameElements Array(1, 0, 3))
+          assert(unsafeRun(put).sameElements(Array(1, 0, 3)))
         },
         test("contents of another IntBuffer") { () =>
-
           val put = for {
             buffer1 <- IntBuffer.wrap(initialValues)
             buffer2 <- IntBuffer(3)
@@ -271,61 +261,53 @@ object IntBufferSuite extends RTS {
             array   <- buffer2.array
           } yield array
 
-          assert(unsafeRun(put) sameElements initialValues)
+          assert(unsafeRun(put).sameElements(initialValues))
         },
         test("contents of an array") { () =>
-
           val put = for {
             buffer <- IntBuffer(3)
             _      <- buffer.put(initialValues)
             array  <- buffer.array
           } yield array
 
-          assert(unsafeRun(put) sameElements initialValues)
+          assert(unsafeRun(put).sameElements(initialValues))
         },
         test("offset contents of an array") { () =>
-
           val put = for {
             buffer <- IntBuffer(2)
             _      <- buffer.put(initialValues, 1, 2)
             array  <- buffer.array
           } yield array
 
-          assert(unsafeRun(put) sameElements Array(2, 3))
+          assert(unsafeRun(put).sameElements(Array(2, 3)))
         }
       ),
-
       namedSection("slice")(
         test("creates a new IntBuffer") { () =>
-
           val slice = for {
             buffer1 <- IntBuffer.wrap(initialValues)
             _       <- buffer1.get
             buffer2 <- buffer1.slice
           } yield buffer2
 
-          assert(unsafeRun(slice.flatMap(_.array)) sameElements initialValues)
+          assert(unsafeRun(slice.flatMap(_.array)).sameElements(initialValues))
           assert(unsafeRun(slice.flatMap(_.position)) == 0)
         }
       ),
-
       namedSection("duplicate")(
         test("creates a new IntBuffer") { () =>
-
           val duplicate = for {
             buffer1 <- IntBuffer.wrap(initialValues)
             _       <- buffer1.get
             buffer2 <- buffer1.duplicate
           } yield buffer2
 
-          assert(unsafeRun(duplicate.flatMap(_.array)) sameElements initialValues)
+          assert(unsafeRun(duplicate.flatMap(_.array)).sameElements(initialValues))
           assert(unsafeRun(duplicate.flatMap(_.position)) == 1)
         }
       ),
-
       namedSection("asReadOnlyBuffer")(
         test("creates a read only IntBuffer") { () =>
-
           val asReadOnlyBuffer = for {
             buffer1  <- IntBuffer.wrap(initialValues)
             buffer2  <- buffer1.asReadOnlyBuffer
