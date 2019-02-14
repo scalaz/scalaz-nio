@@ -1,12 +1,30 @@
 language: scala
 sudo: false
+
 scala:
-  - 2.12.6
+  - 2.12.8
+
 jdk:
-  - oraclejdk8
+  - openjdk8
+
 before_install:
   - export PATH=${PATH}:./vendor/bundle
-script:
-  - sbt tut
-  - sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck test:scalafmtCheck scalafmtSbtCheck test:run
-  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then sbt publish; fi
+
+stages:
+- name: docs
+- name: test
+
+jobs:
+  include:
+    - &docs
+      stage: docs
+      name: "Docs"
+      script: sbt tut
+    - &lint
+      stage: test
+      name: "Lint"
+      script: sbt ++$TRAVIS_SCALA_VERSION scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
+    - &test
+      stage: test
+      name: "Test"
+      script: sbt ++$TRAVIS_SCALA_VERSION test:run package packageSrc publishLocal
