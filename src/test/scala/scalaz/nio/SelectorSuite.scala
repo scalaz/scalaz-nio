@@ -31,8 +31,8 @@ object SelectorSuite extends DefaultRuntime {
           buffer: Buffer[Byte]
         ): IO[Exception, Unit] =
           for {
-            readyChannels <- selector.select
-            selectedKeys  <- selector.selectedKeys
+            _            <- selector.select
+            selectedKeys <- selector.selectedKeys
             _ <- IO.foreach(selectedKeys) {
                   key =>
                     IO.whenM(safeStatusCheck(key.isAcceptable)) {
@@ -49,7 +49,7 @@ object SelectorSuite extends DefaultRuntime {
                           client  = new SocketChannel(sClient.asInstanceOf[JSocketChannel])
                           _       <- client.read(buffer)
                           array   <- buffer.array
-                          text    = byteArrayToString(array)
+                          _       = byteArrayToString(array)
                           _       <- buffer.flip
                           _       <- client.write(buffer)
                           _       <- buffer.clear
@@ -66,9 +66,9 @@ object SelectorSuite extends DefaultRuntime {
           channel  <- ServerSocketChannel.open
           _        <- channel.bind(address)
           _        <- channel.configureBlocking(false)
-          key      <- channel.register(selector, JSelectionKey.OP_ACCEPT)
-          buffer   <- Buffer.byte(256)
-          _        <- started.succeed(())
+//          key      <- channel.register(selector, JSelectionKey.OP_ACCEPT)
+          buffer <- Buffer.byte(256)
+          _      <- started.succeed(())
 
           /*
            *  we need to run the server loop twice:
