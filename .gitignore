@@ -1,3 +1,10 @@
+target
+.sbtopts
+project/.sbt
+project/zecret
+project/travis-deploy-key
+project/secrets.tar.xz
+
 # Dropbox settings and caches
 .dropbox
 .dropbox.attr
@@ -66,7 +73,8 @@ flycheck_*.el
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
