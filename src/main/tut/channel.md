@@ -1,6 +1,6 @@
 ## Client + Server
 
-```tut
+```scala
 object T {
   import scalaz.nio._
   import java.io.IOException
