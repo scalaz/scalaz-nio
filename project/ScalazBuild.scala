@@ -5,7 +5,7 @@ object Scalaz {
 
   lazy val scalazZioVersion = "1.0-RC3"
 
-  def testz           = "0.0.5"
+  def testz           = "0.0.6"
   def silencerVersion = "1.4.1"
   def Scala212        = "2.12.8"
 
