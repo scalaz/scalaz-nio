@@ -3,7 +3,7 @@ import sbt.Keys._
 
 object BuildHelper {
 
-  lazy val zioCoreVersion = "1.0.0-RC9"
+  lazy val zioCoreVersion = "1.0.0-RC10-1"
 
   def testz           = "0.0.5"
   def silencerVersion = "1.4.1"
