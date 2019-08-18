@@ -21,7 +21,7 @@ object BuildHelper {
 
   val compileAndTest = Seq(
     "dev.zio" %% "zio-streams"      % zioCoreVersion,
-    "dev.zio" %% "zio-interop-java" % "1.1.0-RC1"
+    "dev.zio" %% "zio-interop-java" % "1.1.0.0-RC2"
   )
 
   private val stdOptions = Seq(
